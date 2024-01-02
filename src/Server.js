@@ -110,6 +110,12 @@ Server.prototype.createServerCallback = function() {
       body.push(chunk);
     }).on('end', (function() {
       body = Buffer.concat(body).toString();
+      try {
+        var parsedBody = JSON.parse(body);
+        if (parsedBody && typeof parsedBody.state !== 'undefined') {
+          theUrlParams.state = parsedBody.state.toString().toLowerCase();
+        }
+      } catch (e) { }
 
       response.on('error', function(err) {
         this.log("[ERROR Http WebHook Server] Reason: %s.", err);
